@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+<body>
+<h1>
+	OI
+</h1>
+<input id="botao" onclick="sendMessage" type="button" >
+	clica
+</input>
+</body>
+<script type="text/javascript">
+	const socket = new WebSocket("ws://localhost:8080/binary");
+	socket.binaryType = "arraybuffer";
+
+	socket.onopen = function (event) {
+        console.log("Connected");
+    };
+
+    socket.onmessage = function (event) {
+        console.log("recebeu msg")
+    };
+
+    function sendMessage() {
+		var a = new ArrayBuffer(4);
+		var b = new Uint8Array(a);
+		b[0] = 0xa1;
+		b[1] = 0xb2;
+		b[2] = 0xc3;
+		b[3] = 0xd4;
+		console.log('a')
+        socket.send(b);
+    }
+
+</script>
+</html>
