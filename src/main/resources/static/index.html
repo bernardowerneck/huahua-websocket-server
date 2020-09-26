@@ -3,6 +3,8 @@
 <head>
 	<meta charset="UTF-8">
 	<title></title>
+	<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 </head>
 <body>
 <h1>
@@ -13,16 +15,26 @@
 </input>
 </body>
 <script type="text/javascript">
-	const socket = new WebSocket("ws://localhost:8080/binary");
-	socket.binaryType = "arraybuffer";
+	const socket = new SockJS("/websocket");
+	const stompClient = Stomp.over(socket)
+	var currMessage;
+	
+	stompClient.connect({}, function(frame) {
+	    console.log('Connected: ' + frame);
+	    stompClient.subscribe('/topic/picture/foo', function(message) {
+	    	console.log("chegou");
+	        currMessage = message;
+	    });
+	});
+// 	socket.binaryType = "arraybuffer";
 
-	socket.onopen = function (event) {
-        console.log("Connected");
-    };
+// 	socket.onopen = function (event) {
+//         console.log("Connected");
+//     };
 
-    socket.onmessage = function (event) {
-        console.log("recebeu msg")
-    };
+//     socket.onmessage = function (event) {
+//         console.log("recebeu msg")
+//     };
 
     function sendMessage() {
 		var a = new ArrayBuffer(4);
@@ -31,8 +43,7 @@
 		b[1] = 0xb2;
 		b[2] = 0xc3;
 		b[3] = 0xd4;
-		console.log('a')
-        socket.send(b);
+		return b;
     }
 
 </script>
